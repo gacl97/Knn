@@ -3,6 +3,22 @@ import math as math
 from operator import itemgetter
 from sklearn.model_selection import train_test_split
 
+def print_conf_matrix(cm):
+    
+    print("                      Iris-setosa      Iris-versicolor     Iris-virginica")
+    aux = 0
+    for i in cm:
+        if(aux == 0):
+            print("Iris-setosa                 ", end="")
+        elif(aux == 1):
+            print("Iris-versicolor             ", end="")
+        else: 
+            print("Iris-virginica              ", end="")
+        for j in i:
+            print(j, "               ", end="")
+        aux += 1
+        print()
+
 def divide_base(data):
     # Dividir a base em 30% de teste e 70% de treinamento
     train, test = train_test_split(data, test_size = 0.4)
@@ -16,7 +32,7 @@ def divide_base(data):
 
     return [X_train, y_train, X_test, y_test]
 
-def species_(specie):
+def species_name(specie):
 
     if(specie == "Iris-setosa"):
         return 0
@@ -29,7 +45,6 @@ def Hold_out(data):
 
     X_train, y_train, X_test, y_test = divide_base(data)
 
-    print(len(y_test))
     accuracy = 0
     error = 0
     predicts = []
@@ -44,36 +59,32 @@ def Hold_out(data):
         predicts.append(pred)
         if(pred == y_species_test):
             accuracy += 1
-            aux = species_(pred)
+            aux = species_name(pred)
             confusion_matrix[aux][aux] += 1
         else:
             error += 1
-            aux = species_(pred)
-            aux1 = species_(y_species_test)
+            aux = species_name(pred)
+            aux1 = species_name(y_species_test)
             confusion_matrix[aux1][aux] += 1
 
     error /= len(y_test)
     error *= 100
     accuracy /= len(y_test)
     accuracy *= 100
-    return [error, accuracy, predicts, y_test, confusion_matrix]
+    return [error, accuracy, confusion_matrix]
 
 def Random_Subsampling(k, data):
     error = 0
     accuracy = 0
-    predicts = ''
-    y_test = ''
     cm = ''
     for i in range(k):
         aux = Hold_out(data)
         # print(aux)
         error += aux[0]
         accuracy += aux[1]
-        predicts = aux[2]
-        y_test = aux[3]
-        cm = aux[4]
+        cm = aux[2]
         
-    return error/k, accuracy/k, predicts, y_test, cm
+    return error/k, accuracy/k, cm
 
 def Euclidian_distance(item, row):
 
@@ -122,16 +133,9 @@ def Knn(item_to_predict, X_train, y_train):
 
 data = pd.read_csv("Iris.csv")
 
-error, accuracy, predicts, y_test, cm = Random_Subsampling(1, data)
+error, accuracy, cm = Random_Subsampling(1, data)
+
 print(accuracy)
 print(error)
-y_test = y_test.drop('Id', axis=1)
-y_test = list(y_test['Species'])
 
-y_actual = pd.Series(y_test, name="Actual")
-y_pred = pd.Series(predicts, name="Predict")
-
-df_confusion = pd.crosstab(y_actual, y_pred)
-
-print(df_confusion)
-print(cm)
+print_conf_matrix(cm)
