@@ -1,6 +1,7 @@
 import pandas as pd
 import math as math
-from operator import itemgetter
+import KnnClassifier as knn
+import ConfusionMatrix as Cm
 from sklearn.model_selection import train_test_split
 
 def print_conf_matrix(cm):
@@ -20,15 +21,15 @@ def print_conf_matrix(cm):
         print()
 
 def divide_base(data):
-    # Dividir a base em 30% de teste e 70% de treinamento
+    # Dividir a base em 40% de teste e 60% de treinamento
     train, test = train_test_split(data, test_size = 0.4)
     # Remover a coluna a ser predizida
     # Base principal para predizer
     X_train = train.drop('Species', axis = 1)
-    y_train = train[['Id','Species']]
+    y_train = train['Species']
     
     X_test = test.drop('Species', axis = 1)
-    y_test = test[['Id','Species']]
+    y_test = test['Species']
 
     return [X_train, y_train, X_test, y_test]
 
@@ -65,6 +66,7 @@ def Hold_out(data):
             error += 1
             aux = species_name(pred)
             aux1 = species_name(y_species_test)
+            # print(pred, "  -  ", y_species_test)
             confusion_matrix[aux1][aux] += 1
 
     error /= len(y_test)
@@ -131,11 +133,33 @@ def Knn(item_to_predict, X_train, y_train):
 
     return predict(frequency)
 
+
+
+
+
+
 data = pd.read_csv("Iris.csv")
+data = data.drop('Id', axis=1)
 
-error, accuracy, cm = Random_Subsampling(1, data)
+X_train, y_train, X_test, y_test = divide_base(data)
 
+classifier = knn.KnnClassifier()
+classifier.fit(X_train, y_train)
+predicts = classifier.predict(X_test)
+
+
+# classifier.accuracy_score(predicts, y_test)
+# print(predicts)
+error, accuracy= classifier.accuracy_score(predicts, y_test)
 print(accuracy)
 print(error)
+print()
+cm = Cm.ConfusionMatrix(len(y_test.unique()))
+cm.create_confusion_matrix(predicts, y_test)
+cm.show_conf_matrix()
+# error, accuracy, cm = Random_Subsampling(1, data)
 
-print_conf_matrix(cm)
+# print(accuracy)
+# print(error)
+
+# print_conf_matrix(cm)
