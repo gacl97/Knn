@@ -3,7 +3,7 @@ import ConfusionMatrix as Cm
 
 class Random_Subsampling:
 
-    def __init__(self, k = 10):
+    def __init__(self, k = 100):
         self.k = k
     
     def houd_out(self, data):

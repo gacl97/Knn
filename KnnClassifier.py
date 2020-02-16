@@ -3,7 +3,7 @@ import numpy as np
 
 class KnnClassifier:
 
-    def __init__(self,k = 15):
+    def __init__(self,k = 17):
         self.k = k
 
     def accuracy_score(self, y_pred, y_actual):

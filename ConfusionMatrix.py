@@ -10,10 +10,6 @@ class ConfusionMatrix:
     def show_conf_matrix(self):
         
         columns = list(self.names)
-        spaces = -9999
-        for i in self.names:
-            if(len(i) > spaces):
-                spaces = len(i)
         new_cm = pd.DataFrame(self.cm, columns=columns, index=columns)
         print(new_cm)
 
