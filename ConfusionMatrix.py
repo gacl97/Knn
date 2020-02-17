@@ -8,7 +8,7 @@ class ConfusionMatrix:
             self.cm[i] = [0]*size
 
     def show_conf_matrix(self):
-        
+    
         columns = list(self.names)
         new_cm = pd.DataFrame(self.cm, columns=columns, index=columns)
         print(new_cm)
